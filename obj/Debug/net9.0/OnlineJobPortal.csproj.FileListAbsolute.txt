@@ -165,3 +165,4 @@ C:\Users\triplek\Desktop\OnlineJobPortal\obj\Debug\net9.0\refint\OnlineJobPortal
 C:\Users\triplek\Desktop\OnlineJobPortal\obj\Debug\net9.0\OnlineJobPortal.pdb
 C:\Users\triplek\Desktop\OnlineJobPortal\obj\Debug\net9.0\OnlineJobPortal.genruntimeconfig.cache
 C:\Users\triplek\Desktop\OnlineJobPortal\obj\Debug\net9.0\ref\OnlineJobPortal.dll
+C:\Users\triplek\Desktop\OnlineJobPortal\obj\Debug\net9.0\OnlineJobPortal.sourcelink.json

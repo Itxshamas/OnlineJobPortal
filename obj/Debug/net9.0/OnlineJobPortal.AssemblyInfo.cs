@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OnlineJobPortal")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+58deafdad9f8ca5c96e1487f0ca0f9069cb81447")]
 [assembly: System.Reflection.AssemblyProductAttribute("OnlineJobPortal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OnlineJobPortal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
