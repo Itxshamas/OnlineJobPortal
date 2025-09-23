@@ -1,4 +1,4 @@
-using OnlineJobPortal.Interfaces.IServices;
+using OnlineJobPortal.IServices;
 using OnlineJobPortal.Data;
 using OnlineJobPortal.Models;
 using System.Linq;

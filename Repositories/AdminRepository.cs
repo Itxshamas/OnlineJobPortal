@@ -1,4 +1,3 @@
-
 using OnlineJobPortal.Data;
 using OnlineJobPortal.Interfaces;
 using OnlineJobPortal.Models;
@@ -19,6 +18,30 @@ namespace OnlineJobPortal.Repositories
         public IEnumerable<AdminLog> GetAllLogs()
         {
             return _context.AdminLogs.ToList();
+        }
+
+        public void AddLog(AdminLog log)
+        {
+            _context.AdminLogs.Add(log);
+            _context.SaveChanges();
+        }
+
+        public AdminReport GetSystemReport()
+        {
+            return new AdminReport
+            {
+                TotalUsers = _context.ApplicationUsers.Count(),
+                TotalRecruiters = _context.Recruiters.Count(),
+                TotalJobPosts = _context.JobPosts.Count(),
+                ActiveJobPosts = _context.JobPosts.Count(j => j.Status == "Active"),
+                TotalApplications = _context.Applications.Count(),
+                TotalResumes = _context.Resumes.Count()
+            };
+        }
+
+         public IEnumerable<ApplicationUser> GetAllUsers()
+        {
+            return _context.ApplicationUsers.ToList();
         }
     }
 }

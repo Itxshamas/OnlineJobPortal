@@ -9,6 +9,8 @@ namespace OnlineJobPortal.Models
         public string? CompanyName { get; set; }
         public int CategoryId { get; set; }
         public int RecruiterId { get; set; }
+
+        public bool IsActive { get; set; } = true;
         public string Status { get; set; } = "Pending";
     }
  }

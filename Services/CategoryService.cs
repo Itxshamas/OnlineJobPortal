@@ -1,5 +1,5 @@
 using OnlineJobPortal.Interfaces;
-using OnlineJobPortal.Interfaces.IServices;
+using OnlineJobPortal.IServices;
 using OnlineJobPortal.Models;
 using System.Collections.Generic;
 

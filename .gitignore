@@ -1,0 +1,9 @@
+# Bin & obj folders
+bin/
+obj/
+
+# Solution & project files
+*.sln
+*.csproj
+*.http
+
