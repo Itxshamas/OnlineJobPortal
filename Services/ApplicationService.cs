@@ -18,8 +18,6 @@ namespace OnlineJobPortal.Services
         public async Task<IEnumerable<ApplicationDto>> GetAllApplicationsAsync()
         {
             var apps = await _appRepo.GetAllAsync();
-
-            // Map Application -> ApplicationDto
             return apps.Select(a => new ApplicationDto
             {
                 JobPostId = a.JobPostId,

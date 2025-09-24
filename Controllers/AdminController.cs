@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnlineJobPortal.DTOs;
 using OnlineJobPortal.IServices;
 using OnlineJobPortal.Models;
+using System.Collections.Generic;
 
 namespace OnlineJobPortal.Controllers
 {
@@ -37,55 +39,58 @@ namespace OnlineJobPortal.Controllers
         [HttpGet("GetAllAdmin")]
         public IActionResult GetAllAdmin()
         {
-            var allUsers = _adminService.GetAllUsers();
-            var admins = allUsers.Where(u => u.Role == "Admin");
+            IEnumerable<ApplicationUser> admins = _adminService.GetAllAdmins();
             return Ok(admins);
 
         }
 
         //  Recruiter CRUD
         [HttpGet("Recruiters")]
-        public IActionResult GetRecruiters() => Ok(_recruiterService.GetAll());
+        public IActionResult GetRecruiters()
+        {
+            IEnumerable<RecruiterDto> recruiters = _recruiterService.GetAll();
+            return Ok(recruiters);
+        }
 
         [HttpGet("Recruiters/{id}")]
         public IActionResult GetRecruiter(int id)
         {
-            var recruiter = _recruiterService.GetById(id);
+            RecruiterDto? recruiter = _recruiterService.GetById(id);
             if (recruiter == null)
+            {
                 return NotFound(new { Message = "Recruiter not found" });
+            }
             return Ok(recruiter);
         }
 
         [HttpPost("Recruiters")]
-        public IActionResult AddRecruiter([FromBody] Recruiter recruiter)
+        public IActionResult AddRecruiter([FromBody] RecruiterDto recruiterDto)
         {
-            _recruiterService.Add(recruiter);
+            _recruiterService.Add(recruiterDto);
             return Ok(new { Message = "Recruiter added successfully" });
         }
 
         [HttpPut("Recruiters/{id}")]
-        public IActionResult UpdateRecruiter(int id, [FromBody] Recruiter recruiter)
+        public IActionResult UpdateRecruiter(int id, [FromBody] RecruiterDto recruiterDto)
         {
-            var existing = _recruiterService.GetById(id);
+            RecruiterDto? existing = _recruiterService.GetById(id);
             if (existing == null)
+            {
                 return NotFound(new { Message = "Recruiter not found" });
+            }
 
-            existing.FullName = recruiter.FullName;
-            existing.CompanyName = recruiter.CompanyName;
-            existing.Email = recruiter.Email;
-            existing.Phone = recruiter.Phone;
-            existing.IsActive = recruiter.IsActive;
-
-            _recruiterService.Update(existing);
+            _recruiterService.Update(id, recruiterDto);
             return Ok(new { Message = "Recruiter updated successfully" });
         }
 
         [HttpDelete("Recruiters/{id}")]
         public IActionResult DeleteRecruiter(int id)
         {
-            var recruiter = _recruiterService.GetById(id);
+            RecruiterDto? recruiter = _recruiterService.GetById(id);
             if (recruiter == null)
+            {
                 return NotFound(new { Message = "Recruiter not found" });
+            }
 
             _recruiterService.Delete(id);
             return Ok(new { Message = "Recruiter deleted successfully" });
@@ -93,14 +98,20 @@ namespace OnlineJobPortal.Controllers
 
         // Category CRUD
         [HttpGet("JobCategories")]
-        public IActionResult GetCategories() => Ok(_categoryService.GetAll());
+        public IActionResult GetCategories()
+        {
+            var categories = _categoryService.GetAll();
+            return Ok(categories);
+        }
 
         [HttpGet("JobCategories/{id}")]
         public IActionResult GetCategory(int id)
         {
             var category = _categoryService.GetById(id);
             if (category == null)
+            {
                 return NotFound(new { Message = "Category not found" });
+            }
             return Ok(category);
         }
 
@@ -116,7 +127,9 @@ namespace OnlineJobPortal.Controllers
         {
             var existing = _categoryService.GetById(id);
             if (existing == null)
+            {
                 return NotFound(new { Message = "Category not found" });
+            }
 
             existing.Name = category.Name;
             _categoryService.Update(existing);
@@ -129,7 +142,9 @@ namespace OnlineJobPortal.Controllers
         {
             var category = _categoryService.GetById(id);
             if (category == null)
+            {
                 return NotFound(new { Message = "Category not found" });
+            }
 
             _categoryService.Delete(id);
             return Ok(new { Message = "Category deleted successfully" });
@@ -162,7 +177,10 @@ namespace OnlineJobPortal.Controllers
         public async Task<IActionResult> DeleteApplication(int id)
         {
             var success = await _applicationService.DeleteApplicationAsync(id);
-            if (!success) return NotFound(new { Message = "Application not found" });
+            if (!success)
+            {
+                return NotFound(new { Message = "Application not found" });
+            }
             return Ok(new { Message = "Application deleted successfully" });
         }
 
@@ -179,7 +197,10 @@ namespace OnlineJobPortal.Controllers
         public async Task<IActionResult> DeleteResume(int id)
         {
             var success = await _resumeService.DeleteResumeAsync(id);
-            if (!success) return NotFound(new { Message = "Resume not found" });
+            if (!success)
+            {
+                return NotFound(new { Message = "Resume not found" });
+            }
             return Ok(new { Message = "Resume deleted successfully" });
         }
 

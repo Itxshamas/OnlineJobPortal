@@ -1,11 +1,12 @@
+using OnlineJobPortal.DTOs;
 using OnlineJobPortal.Models;
 
 namespace OnlineJobPortal.IServices
 {
     public interface IAuthService
     {
-        ApplicationUser? AuthenticateUser(string email, string password);
+        LoginResponseDto? AuthenticateUser(string email, string password);
+        bool RegisterUser(RegisterDto registerDto);
         ApplicationUser? GetUserByEmail(string email);
-        void RegisterUser(ApplicationUser user);
     }
 }

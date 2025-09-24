@@ -19,7 +19,7 @@ namespace OnlineJobPortal.Repositories
             return await _context.Resumes.ToListAsync();
         }
 
-        public async Task<Resume> GetByIdAsync(int id)
+        public async Task<Resume?> GetByIdAsync(int id)
         {
             return await _context.Resumes.FirstOrDefaultAsync(r => r.Id == id);
         }

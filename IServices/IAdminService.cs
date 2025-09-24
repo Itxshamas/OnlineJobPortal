@@ -9,6 +9,7 @@ namespace OnlineJobPortal.IServices
         void AddLog(AdminLog log);
         AdminReport GetSystemReport();
         IEnumerable<ApplicationUser> GetAllUsers();
+        IEnumerable<ApplicationUser> GetAllAdmins();
 
     }
 }

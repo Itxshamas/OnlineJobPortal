@@ -32,5 +32,10 @@ namespace OnlineJobPortal.Services
         {
             return _adminRepository.GetAllUsers();
         }
+
+        public IEnumerable<ApplicationUser> GetAllAdmins()
+        {
+            return _adminRepository.GetAllUsers().Where(u => u.Role == "Admin");
+        }
     }
 }

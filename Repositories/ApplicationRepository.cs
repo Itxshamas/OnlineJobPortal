@@ -19,14 +19,14 @@ namespace OnlineJobPortal.Repositories
             return await _context.Applications.ToListAsync();
         }
 
-        public async Task<Application> GetByIdAsync(int id)
+        public async Task<Application?> GetByIdAsync(int id)
         {
             return await _context.Applications.FirstOrDefaultAsync(a => a.Id == id);
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var app = await _context.Applications.FindAsync(id);
+            Application app = await _context.Applications.FindAsync(id);
             if (app == null) return false;
 
             _context.Applications.Remove(app);
