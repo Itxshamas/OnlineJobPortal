@@ -1,32 +1,101 @@
-using OnlineJobPortal.Data;
+using OnlineJobPortal.DTOs;
+using OnlineJobPortal.Interfaces;
 using OnlineJobPortal.Models;
 using OnlineJobPortal.IServices;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace OnlineJobPortal.Services
 {
     public class JobService : IJobService
     {
-        private readonly ApplicationDbContext _context;
-        public JobService(ApplicationDbContext context)
+        private readonly IJobRepository _jobRepository;
+
+        public JobService(IJobRepository jobRepository)
         {
-            _context = context;
+            _jobRepository = jobRepository;
         }
 
-        public List<JobPost> GetAllJobs()
+        public IEnumerable<JobPostDto> GetAllJobs()
         {
-            return _context.JobPosts.ToList();
+            IEnumerable<JobPost> jobs = _jobRepository.GetAll();
+            return jobs.Select(j => new JobPostDto
+            {
+                Title = j.Title,
+                Description = j.Description,
+                CompanyName = j.CompanyName,
+                CategoryId = j.CategoryId,
+                RecruiterId = j.RecruiterId,
+                NumberOfOpenings = j.NumberOfOpenings,
+                Location = j.Location,
+                SalaryRange = j.SalaryRange,
+                Deadline = j.Deadline,
+                Status = j.Status,
+                PostedDate = j.PostedDate
+            });
         }
 
-        public bool UpdateJobStatus(int jobId, string status)
+        public JobPostDto? GetJobById(int id)
         {
-            var job = _context.JobPosts.FirstOrDefault(j => j.Id == jobId);
-            if (job == null) return false;
+            var job = _jobRepository.GetById(id);
+            if (job == null) return null;
 
-            job.Status = status;
-            _context.SaveChanges();
-            return true;
+            return new JobPostDto
+            {
+                Title = job.Title,
+                Description = job.Description,
+                CompanyName = job.CompanyName,
+                CategoryId = job.CategoryId,
+                RecruiterId = job.RecruiterId,
+                NumberOfOpenings = job.NumberOfOpenings,
+                Location = job.Location,
+                SalaryRange = job.SalaryRange,
+                Deadline = job.Deadline,
+                Status = job.Status,
+                PostedDate = job.PostedDate
+            };
+        }
+
+        public void CreateJob(JobPostDto jobPostDto)
+        {
+            var job = new JobPost
+            {
+                Title = jobPostDto.Title,
+                Description = jobPostDto.Description,
+                CompanyName = jobPostDto.CompanyName,
+                CategoryId = jobPostDto.CategoryId,
+                RecruiterId = jobPostDto.RecruiterId,
+                NumberOfOpenings = jobPostDto.NumberOfOpenings,
+                Location = jobPostDto.Location,
+                SalaryRange = jobPostDto.SalaryRange,
+                Deadline = jobPostDto.Deadline,
+                Status = jobPostDto.Status ?? "Pending",
+                PostedDate = jobPostDto.PostedDate != default ? jobPostDto.PostedDate : System.DateTime.Now
+            };
+
+            _jobRepository.Add(job);
+        }
+
+        public void UpdateJob(int id, JobPostDto jobPostDto)
+        {
+            var job = _jobRepository.GetById(id);
+            if (job == null) return;
+
+            job.Title = jobPostDto.Title;
+            job.Description = jobPostDto.Description;
+            job.CompanyName = jobPostDto.CompanyName;
+            job.CategoryId = jobPostDto.CategoryId;
+            job.RecruiterId = jobPostDto.RecruiterId;
+            job.NumberOfOpenings = jobPostDto.NumberOfOpenings;
+            job.Location = jobPostDto.Location;
+            job.SalaryRange = jobPostDto.SalaryRange;
+            job.Deadline = jobPostDto.Deadline;
+            job.Status = jobPostDto.Status ?? job.Status;
+
+            _jobRepository.Update(job);
+        }
+
+        public void DeleteJob(int id)
+        {
+            _jobRepository.Delete(id);
         }
     }
 }

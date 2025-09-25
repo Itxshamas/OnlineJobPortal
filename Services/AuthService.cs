@@ -25,19 +25,19 @@ namespace OnlineJobPortal.Services
 
         public LoginResponseDto? AuthenticateUser(string email, string password)
         {
-            var user = _context.ApplicationUsers.FirstOrDefault(u => u.Email == email && u.PasswordHash == password);
+            ApplicationUser user = _context.ApplicationUsers.FirstOrDefault(u => u.Email == email && u.PasswordHash == password);
             if (user == null)
             {
                 return null;
             }
 
-            var token = GenerateJwtToken(user);
+            string token = GenerateJwtToken(user);
             if (token == null)
             {
                 return null;
             }
 
-            var userDto = new UserDto
+            UserDto userDto = new UserDto
             {
                 Id = user.Id,
                 FullName = user.FullName,
@@ -48,7 +48,7 @@ namespace OnlineJobPortal.Services
             };
 
             return new LoginResponseDto
-            {              
+            {
                 Token = token,
                 User = userDto
             };
@@ -66,7 +66,7 @@ namespace OnlineJobPortal.Services
                 return false; // User already exists
             }
 
-            var user = new ApplicationUser
+            ApplicationUser user = new ApplicationUser
             {
                 FullName = registerDto.FullName,
                 Email = registerDto.Email,
@@ -85,19 +85,19 @@ namespace OnlineJobPortal.Services
         {
             if (user.Email == null || user.Role == null) return null;
 
-            var jwtSettings = _configuration.GetSection("Jwt");
-            var keyString = jwtSettings["Key"];
-            var issuer = jwtSettings["Issuer"];
-            var audience = jwtSettings["Audience"];
+            IConfigurationSection jwtSettings = _configuration.GetSection("Jwt");
+            string keyString = jwtSettings["Key"];
+            string issuer = jwtSettings["Issuer"];
+            string audience = jwtSettings["Audience"];
 
             if (string.IsNullOrEmpty(keyString) || string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience))
             {
                 return null;
             }
 
-            var key = Encoding.UTF8.GetBytes(keyString);
+            byte[] key = Encoding.UTF8.GetBytes(keyString);
 
-            var claims = new List<Claim>
+            List<Claim> claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim("role", user.Role),
@@ -105,7 +105,7 @@ namespace OnlineJobPortal.Services
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var tokenDescriptor = new SecurityTokenDescriptor
+            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMinutes(10),
@@ -116,8 +116,8 @@ namespace OnlineJobPortal.Services
                 Audience = audience
             };
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
         }

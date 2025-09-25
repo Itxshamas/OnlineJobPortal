@@ -39,7 +39,7 @@ namespace OnlineJobPortal.Repositories
 
         public void Delete(int id)
         {
-            var recruiter = _context.Recruiters.FirstOrDefault(r => r.Id == id);
+            Recruiter recruiter = _context.Recruiters.FirstOrDefault(r => r.Id == id);
             if (recruiter != null)
             {
                 _context.Recruiters.Remove(recruiter);

@@ -1,11 +1,14 @@
-using OnlineJobPortal.Models;
+using OnlineJobPortal.DTOs;
 using System.Collections.Generic;
 
 namespace OnlineJobPortal.IServices
 {
     public interface IJobService
     {
-        List<JobPost> GetAllJobs();
-        bool UpdateJobStatus(int jobId, string status);
+        IEnumerable<JobPostDto> GetAllJobs();
+        JobPostDto? GetJobById(int id);
+        void CreateJob(JobPostDto jobPostDto);
+        void UpdateJob(int id, JobPostDto jobPostDto);
+        void DeleteJob(int id);
     }
 }

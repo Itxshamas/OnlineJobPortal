@@ -10,15 +10,16 @@ namespace OnlineJobPortal.Services
     public class RecruiterService : IRecruiterService
     {
         private readonly IRecruiterRepository _recruiterRepository;
-
-        public RecruiterService(IRecruiterRepository recruiterRepository)
+        private readonly IJobRepository _jobRepository;
+        public RecruiterService(IRecruiterRepository recruiterRepository, IJobRepository jobRepository)
         {
             _recruiterRepository = recruiterRepository;
+            _jobRepository = jobRepository;
         }
 
         public IEnumerable<RecruiterDto> GetAll()
         {
-            var recruiters = _recruiterRepository.GetAll();
+            IEnumerable<Recruiter> recruiters = _recruiterRepository.GetAll();
             return recruiters.Select(recruiter => new RecruiterDto
             {
                 Id = recruiter.Id,
@@ -32,7 +33,7 @@ namespace OnlineJobPortal.Services
 
         public RecruiterDto? GetById(int id)
         {
-            var recruiter = _recruiterRepository.GetById(id);
+            Recruiter recruiter = _recruiterRepository.GetById(id);
             if (recruiter == null)
             {
                 return null;
@@ -51,7 +52,7 @@ namespace OnlineJobPortal.Services
 
         public void Add(RecruiterDto recruiterDto)
         {
-            var recruiter = new Recruiter
+            Recruiter recruiter = new Recruiter
             {
                 FullName = recruiterDto.FullName,
                 CompanyName = recruiterDto.CompanyName,
@@ -64,7 +65,7 @@ namespace OnlineJobPortal.Services
 
         public void Update(int id, RecruiterDto recruiterDto)
         {
-            var recruiter = _recruiterRepository.GetById(id);
+            Recruiter recruiter = _recruiterRepository.GetById(id);
             if (recruiter != null)
             {
                 recruiter.FullName = recruiterDto.FullName;
@@ -80,5 +81,34 @@ namespace OnlineJobPortal.Services
         {
             _recruiterRepository.Delete(id);
         }
+
+        public JobPostDto CreateJobPost(JobPostDto jobPostDto, int recruiterId)
+{
+    jobPostDto.RecruiterId = recruiterId;
+    jobPostDto.PostedDate = DateTime.Now;
+    jobPostDto.Status ??= "Pending";
+
+    JobPost jobPost = new JobPost
+    {
+        Title = jobPostDto.Title,
+        Description = jobPostDto.Description,
+        CompanyName = jobPostDto.CompanyName,
+        CategoryId = jobPostDto.CategoryId,
+        RecruiterId = jobPostDto.RecruiterId,
+        Status = jobPostDto.Status,
+        PostedDate = jobPostDto.PostedDate,
+        NumberOfOpenings = jobPostDto.NumberOfOpenings,
+        Location = jobPostDto.Location,
+        SalaryRange = jobPostDto.SalaryRange,
+        Deadline = jobPostDto.Deadline,
+        IsActive = true
+    };
+
+    _jobRepository.Add(jobPost);
+
+    // Return DTO to controller
+    return jobPostDto;
+}
+
     }
 }

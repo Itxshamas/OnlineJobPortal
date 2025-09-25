@@ -100,14 +100,14 @@ namespace OnlineJobPortal.Controllers
         [HttpGet("JobCategories")]
         public IActionResult GetCategories()
         {
-            var categories = _categoryService.GetAll();
+            IEnumerable<Category> categories = _categoryService.GetAll();
             return Ok(categories);
         }
 
         [HttpGet("JobCategories/{id}")]
         public IActionResult GetCategory(int id)
         {
-            var category = _categoryService.GetById(id);
+            Category category = _categoryService.GetById(id);
             if (category == null)
             {
                 return NotFound(new { Message = "Category not found" });
@@ -125,7 +125,7 @@ namespace OnlineJobPortal.Controllers
         [HttpPut("JobCategories/{id}")]
         public IActionResult UpdateCategory(int id, [FromBody] Category category)
         {
-            var existing = _categoryService.GetById(id);
+            Category existing = _categoryService.GetById(id);
             if (existing == null)
             {
                 return NotFound(new { Message = "Category not found" });
@@ -140,7 +140,7 @@ namespace OnlineJobPortal.Controllers
         [HttpDelete("JobCategories/{id}")]
         public IActionResult DeleteCategory(int id)
         {
-            var category = _categoryService.GetById(id);
+            Category category = _categoryService.GetById(id);
             if (category == null)
             {
                 return NotFound(new { Message = "Category not found" });
@@ -154,7 +154,7 @@ namespace OnlineJobPortal.Controllers
         [HttpGet("AdminLogs")]
         public IActionResult GetLogs()
         {
-            var logs = _adminService.GetAllLogs();
+            IEnumerable<AdminLog> logs = _adminService.GetAllLogs();
             return Ok(logs);
         }
 
@@ -162,21 +162,21 @@ namespace OnlineJobPortal.Controllers
         [HttpGet("SystemReports")]
         public IActionResult GetReports()
         {
-            var report = _adminService.GetSystemReport();
+            AdminReport report = _adminService.GetSystemReport();
             return Ok(report);
         }
         //Applications 
         [HttpGet("Applications")]
         public async Task<IActionResult> GetApplications()
         {
-            var applications = await _applicationService.GetAllApplicationsAsync();
+            IEnumerable<ApplicationDto> applications = await _applicationService.GetAllApplicationsAsync();
             return Ok(applications);
         }
 
         [HttpDelete("Applications/{id}")]
         public async Task<IActionResult> DeleteApplication(int id)
         {
-            var success = await _applicationService.DeleteApplicationAsync(id);
+            bool success = await _applicationService.DeleteApplicationAsync(id);
             if (!success)
             {
                 return NotFound(new { Message = "Application not found" });
@@ -189,14 +189,14 @@ namespace OnlineJobPortal.Controllers
         [HttpGet("Resumes")]
         public async Task<IActionResult> GetResumes()
         {
-            var resumes = await _resumeService.GetAllResumesAsync();
+            IEnumerable<ResumeDto>? resumes = await _resumeService.GetAllResumesAsync();
             return Ok(resumes);
         }
 
         [HttpDelete("Resumes/{id}")]
         public async Task<IActionResult> DeleteResume(int id)
         {
-            var success = await _resumeService.DeleteResumeAsync(id);
+            bool success = await _resumeService.DeleteResumeAsync(id);
             if (!success)
             {
                 return NotFound(new { Message = "Resume not found" });

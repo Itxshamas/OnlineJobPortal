@@ -43,7 +43,7 @@ namespace OnlineJobPortal.Repositories
 
         public void DeleteUser(int id)
         {
-            var user = _context.ApplicationUsers.FirstOrDefault(u => u.Id == id);
+            ApplicationUser user = _context.ApplicationUsers.FirstOrDefault(u => u.Id == id);
             if (user != null)
             {
                 _context.ApplicationUsers.Remove(user);

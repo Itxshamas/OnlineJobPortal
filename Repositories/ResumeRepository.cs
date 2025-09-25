@@ -26,7 +26,7 @@ namespace OnlineJobPortal.Repositories
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var resume = await _context.Resumes.FindAsync(id);
+            Resume resume = await _context.Resumes.FindAsync(id);
             if (resume == null) return false;
 
             _context.Resumes.Remove(resume);
