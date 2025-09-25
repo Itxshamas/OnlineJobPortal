@@ -10,7 +10,7 @@ namespace OnlineJobPortal.Data
         {
         }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<JobPost> JobPosts { get; set; }
+        public DbSet<JobPost> JobPosts{ get; set; }
         public DbSet<Application> Applications { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<AdminLog> AdminLogs { get; set; }

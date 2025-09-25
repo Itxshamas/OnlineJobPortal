@@ -1,6 +1,6 @@
 using OnlineJobPortal.Data;
 using OnlineJobPortal.Models;
-using OnlineJobPortal.Interfaces.IServices;
+using OnlineJobPortal.IServices;
 using System.Collections.Generic;
 using System.Linq;
 

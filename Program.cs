@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OnlineJobPortal.Data;
 using OnlineJobPortal.Interfaces;
-using OnlineJobPortal.Interfaces.IServices;
+using OnlineJobPortal.IServices;
 using OnlineJobPortal.Repositories;
 using OnlineJobPortal.Services;
 using System.Text;
@@ -55,6 +55,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRecruiterRepository, RecruiterRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
+builder.Services.AddScoped<IResumeRepository, ResumeRepository>();
 
 
 //  Services 
@@ -63,6 +65,9 @@ builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IRecruiterService, RecruiterService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IApplicationService, ApplicationService>();
+builder.Services.AddScoped<IResumeService, ResumeService>();
+
 
 
 

@@ -1,6 +1,6 @@
 using OnlineJobPortal.Models;
 using OnlineJobPortal.Interfaces;
-using OnlineJobPortal.Interfaces.IServices;
+using OnlineJobPortal.IServices;
 using System.Collections.Generic;
 
 namespace OnlineJobPortal.Services

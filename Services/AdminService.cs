@@ -1,5 +1,5 @@
 using OnlineJobPortal.Interfaces;
-using OnlineJobPortal.Interfaces.IServices;
+using OnlineJobPortal.IServices;
 using OnlineJobPortal.Models;
 using System.Collections.Generic;
 
@@ -17,6 +17,20 @@ namespace OnlineJobPortal.Services
         public IEnumerable<AdminLog> GetAllLogs()
         {
             return _adminRepository.GetAllLogs();
+        }
+
+        public void AddLog(AdminLog log)
+        {
+            _adminRepository.AddLog(log);
+        }
+
+        public AdminReport GetSystemReport()
+        {
+            return _adminRepository.GetSystemReport();
+        }
+        public IEnumerable<ApplicationUser> GetAllUsers()
+        {
+            return _adminRepository.GetAllUsers();
         }
     }
 }

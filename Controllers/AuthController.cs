@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using OnlineJobPortal.DTOs;
 using OnlineJobPortal.Models;
-using OnlineJobPortal.Interfaces.IServices;
+using OnlineJobPortal.IServices;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
