@@ -20,6 +20,20 @@ namespace OnlineJobPortal.Repositories
             return _context.Recruiters.ToList();
         }
 
+        // Fetch logged-in recruiter by ID
+         public Recruiter? GetRecById(int id)
+        {
+            return _context.Recruiters.FirstOrDefault(r => r.Id == id);
+        }
+        // Update recruiter entity in DB
+        public void UpdateRec(Recruiter recruiter)
+        {
+            _context.Recruiters.Update(recruiter);
+            _context.SaveChanges();
+        }
+        
+
+
         public Recruiter? GetById(int id)
         {
             return _context.Recruiters.FirstOrDefault(r => r.Id == id);

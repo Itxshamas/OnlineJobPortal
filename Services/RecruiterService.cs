@@ -49,7 +49,37 @@ namespace OnlineJobPortal.Services
                 IsActive = recruiter.IsActive
             };
         }
+        //Get Recruiter Profile
+        public RecruiterDto? GetProfile(int recruiterId)
+        {
+            Recruiter? recruiter = _recruiterRepository.GetRecById(recruiterId);
+            if (recruiter == null) return null;
 
+            return new RecruiterDto
+            {
+                Id = recruiter.Id,
+                FullName = recruiter.FullName,
+                CompanyName = recruiter.CompanyName,
+                Email = recruiter.Email,
+                Phone = recruiter.Phone,
+                IsActive = recruiter.IsActive
+            };
+        }
+
+        //Update Profile: 
+        public void UpdateRecProfile(int recruiterId, RecruiterDto recruiterDto)
+        {
+            Recruiter? recruiter = _recruiterRepository.GetRecById(recruiterId);
+            if (recruiter == null) return;
+
+            recruiter.FullName = recruiterDto.FullName;
+            recruiter.CompanyName = recruiterDto.CompanyName;
+            recruiter.Email = recruiterDto.Email;
+            recruiter.Phone = recruiterDto.Phone;
+            recruiter.IsActive = recruiterDto.IsActive;
+
+            _recruiterRepository.UpdateRec(recruiter);
+        }
         public void Add(RecruiterDto recruiterDto)
         {
             Recruiter recruiter = new Recruiter
@@ -83,32 +113,32 @@ namespace OnlineJobPortal.Services
         }
 
         public JobPostDto CreateJobPost(JobPostDto jobPostDto, int recruiterId)
-{
-    jobPostDto.RecruiterId = recruiterId;
-    jobPostDto.PostedDate = DateTime.Now;
-    jobPostDto.Status ??= "Pending";
+        {
+            jobPostDto.RecruiterId = recruiterId;
+            jobPostDto.PostedDate = DateTime.Now;
+            jobPostDto.Status ??= "Pending";
 
-    JobPost jobPost = new JobPost
-    {
-        Title = jobPostDto.Title,
-        Description = jobPostDto.Description,
-        CompanyName = jobPostDto.CompanyName,
-        CategoryId = jobPostDto.CategoryId,
-        RecruiterId = jobPostDto.RecruiterId,
-        Status = jobPostDto.Status,
-        PostedDate = jobPostDto.PostedDate,
-        NumberOfOpenings = jobPostDto.NumberOfOpenings,
-        Location = jobPostDto.Location,
-        SalaryRange = jobPostDto.SalaryRange,
-        Deadline = jobPostDto.Deadline,
-        IsActive = true
-    };
+            JobPost jobPost = new JobPost
+            {
+                Title = jobPostDto.Title,
+                Description = jobPostDto.Description,
+                CompanyName = jobPostDto.CompanyName,
+                CategoryId = jobPostDto.CategoryId,
+                RecruiterId = jobPostDto.RecruiterId,
+                Status = jobPostDto.Status,
+                PostedDate = jobPostDto.PostedDate,
+                NumberOfOpenings = jobPostDto.NumberOfOpenings,
+                Location = jobPostDto.Location,
+                SalaryRange = jobPostDto.SalaryRange,
+                Deadline = jobPostDto.Deadline,
+                IsActive = true
+            };
 
-    _jobRepository.Add(jobPost);
+            _jobRepository.Add(jobPost);
 
-    // Return DTO to controller
-    return jobPostDto;
-}
+            // Return DTO to controller
+            return jobPostDto;
+        }
 
     }
 }

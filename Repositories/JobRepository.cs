@@ -46,5 +46,19 @@ namespace OnlineJobPortal.Repositories
                 _context.SaveChanges();
             }
         }
+
+        // Get all job posts of a specific recruiter
+        public IEnumerable<JobPost> GetJobsByRecruiterId(int recruiterId)
+        {
+            return _context.JobPosts
+                           .Where(j => j.RecruiterId == recruiterId)
+                           .ToList();
+        }
+         // Get a specific job post by id for a specific recruiter
+         public JobPost? GetJobByIdAndRecruiterId(int jobId, int recruiterId)
+        {
+            return _context.JobPosts
+                           .FirstOrDefault(j => j.Id == jobId && j.RecruiterId == recruiterId);
+        }
     }
 }

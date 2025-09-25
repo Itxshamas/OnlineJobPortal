@@ -7,8 +7,10 @@ namespace OnlineJobPortal.Interfaces
     {
         IEnumerable<Recruiter> GetAll();
         Recruiter? GetById(int id);
+        Recruiter? GetRecById(int id);
         void Add(Recruiter recruiter);
         void Update(Recruiter recruiter);
+        void UpdateRec(Recruiter recruiter);
         void Delete(int id);
     }
 }

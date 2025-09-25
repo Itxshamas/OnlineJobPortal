@@ -10,5 +10,8 @@ namespace OnlineJobPortal.Interfaces
         void Add(JobPost jobPost);
         void Update(JobPost jobPost);
         void Delete(int id);
+        IEnumerable<JobPost> GetJobsByRecruiterId(int recruiterId);
+        JobPost? GetJobByIdAndRecruiterId(int jobId, int recruiterId);
+
     }
 }

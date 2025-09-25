@@ -11,7 +11,9 @@ namespace OnlineJobPortal.IServices
         void Add(RecruiterDto recruiterDto);
         void Update(int id, RecruiterDto recruiterDto);
         void Delete(int id);
-       JobPostDto CreateJobPost(JobPostDto jobPostDto, int recruiterId);
+        JobPostDto CreateJobPost(JobPostDto jobPostDto, int recruiterId);
+        RecruiterDto? GetProfile(int recruiterId);
+        void UpdateRecProfile(int recruiterId, RecruiterDto recruiterDto);
 
     }
 }
