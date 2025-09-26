@@ -39,7 +39,7 @@ namespace OnlineJobPortal.Repositories
 
         public void Delete(int id)
         {
-            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
+            Category category = _context.Categories.FirstOrDefault(c => c.Id == id);
             if (category != null)
             {
                 _context.Categories.Remove(category);

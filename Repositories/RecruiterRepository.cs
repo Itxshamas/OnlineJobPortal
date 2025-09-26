@@ -20,6 +20,20 @@ namespace OnlineJobPortal.Repositories
             return _context.Recruiters.ToList();
         }
 
+        // Fetch logged-in recruiter by ID
+         public Recruiter? GetRecById(int id)
+        {
+            return _context.Recruiters.FirstOrDefault(r => r.Id == id);
+        }
+        // Update recruiter entity in DB
+        public void UpdateRec(Recruiter recruiter)
+        {
+            _context.Recruiters.Update(recruiter);
+            _context.SaveChanges();
+        }
+        
+
+
         public Recruiter? GetById(int id)
         {
             return _context.Recruiters.FirstOrDefault(r => r.Id == id);
@@ -39,7 +53,7 @@ namespace OnlineJobPortal.Repositories
 
         public void Delete(int id)
         {
-            var recruiter = _context.Recruiters.FirstOrDefault(r => r.Id == id);
+            Recruiter recruiter = _context.Recruiters.FirstOrDefault(r => r.Id == id);
             if (recruiter != null)
             {
                 _context.Recruiters.Remove(recruiter);
