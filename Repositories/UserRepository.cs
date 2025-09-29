@@ -41,6 +41,12 @@ namespace OnlineJobPortal.Repositories
             _context.SaveChanges();
         }
 
+        public async Task UpdateUserAsync(ApplicationUser user)
+        {
+            _context.ApplicationUsers.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
         public void DeleteUser(int id)
         {
             ApplicationUser user = _context.ApplicationUsers.FirstOrDefault(u => u.Id == id);

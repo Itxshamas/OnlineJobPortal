@@ -15,6 +15,5 @@ namespace OnlineJobPortal.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<AdminLog> AdminLogs { get; set; }
         public DbSet<Resume> Resumes { get; set; }
-        public DbSet<Recruiter> Recruiters { get; set; }
     }
 }

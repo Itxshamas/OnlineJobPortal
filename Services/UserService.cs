@@ -1,6 +1,7 @@
-using OnlineJobPortal.Models;
+using OnlineJobPortal.DTOs;
 using OnlineJobPortal.Interfaces;
 using OnlineJobPortal.IServices;
+using OnlineJobPortal.Models;
 
 namespace OnlineJobPortal.Services
 {
@@ -36,6 +37,17 @@ namespace OnlineJobPortal.Services
         public void UpdateUser(ApplicationUser user)
         {
             _userRepository.UpdateUser(user);
+        }
+
+        public async Task UpdateUserAsync(int userId, UserDto userDto)
+        {
+            ApplicationUser user = _userRepository.GetUserById(userId);
+            if (user != null)
+            {
+                user.FullName = userDto.FullName;
+                user.Email = userDto.Email;
+                await _userRepository.UpdateUserAsync(user);
+            }
         }
 
         public void DeleteUser(int id)

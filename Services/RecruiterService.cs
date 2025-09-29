@@ -1,122 +1,92 @@
 using OnlineJobPortal.Models;
 using OnlineJobPortal.Interfaces;
 using OnlineJobPortal.IServices;
-using System.Collections.Generic;
 using OnlineJobPortal.DTOs;
+using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace OnlineJobPortal.Services
 {
     public class RecruiterService : IRecruiterService
     {
-        private readonly IRecruiterRepository _recruiterRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IJobRepository _jobRepository;
-        public RecruiterService(IRecruiterRepository recruiterRepository, IJobRepository jobRepository)
+
+        public RecruiterService(IUserRepository userRepository, IJobRepository jobRepository)
         {
-            _recruiterRepository = recruiterRepository;
+            _userRepository = userRepository;
             _jobRepository = jobRepository;
         }
 
-        public IEnumerable<RecruiterDto> GetAll()
+        //  Get all recruiters
+        public IEnumerable<ApplicationUser> GetAll()
         {
-            IEnumerable<Recruiter> recruiters = _recruiterRepository.GetAll();
-            return recruiters.Select(recruiter => new RecruiterDto
-            {
-                Id = recruiter.Id,
-                FullName = recruiter.FullName,
-                CompanyName = recruiter.CompanyName,
-                Email = recruiter.Email,
-                Phone = recruiter.Phone,
-                IsActive = recruiter.IsActive
-            });
+            return _userRepository.GetUsersByRole("Recruiter");
         }
 
-        public RecruiterDto? GetById(int id)
+        //  Get recruiter by Id
+        public ApplicationUser? GetById(int id)
         {
-            Recruiter recruiter = _recruiterRepository.GetById(id);
-            if (recruiter == null)
-            {
-                return null;
-            }
-
-            return new RecruiterDto
-            {
-                Id = recruiter.Id,
-                FullName = recruiter.FullName,
-                CompanyName = recruiter.CompanyName,
-                Email = recruiter.Email,
-                Phone = recruiter.Phone,
-                IsActive = recruiter.IsActive
-            };
-        }
-        //Get Recruiter Profile
-        public RecruiterDto? GetProfile(int recruiterId)
-        {
-            Recruiter? recruiter = _recruiterRepository.GetRecById(recruiterId);
-            if (recruiter == null) return null;
-
-            return new RecruiterDto
-            {
-                Id = recruiter.Id,
-                FullName = recruiter.FullName,
-                CompanyName = recruiter.CompanyName,
-                Email = recruiter.Email,
-                Phone = recruiter.Phone,
-                IsActive = recruiter.IsActive
-            };
+            return _userRepository.GetUserById(id);
         }
 
-        //Update Profile: 
-        public void UpdateRecProfile(int recruiterId, RecruiterDto recruiterDto)
+        // Get profile for logged-in recruiter
+        public ApplicationUser? GetProfile(int recruiterId)
         {
-            Recruiter? recruiter = _recruiterRepository.GetRecById(recruiterId);
-            if (recruiter == null) return;
-
-            recruiter.FullName = recruiterDto.FullName;
-            recruiter.CompanyName = recruiterDto.CompanyName;
-            recruiter.Email = recruiterDto.Email;
-            recruiter.Phone = recruiterDto.Phone;
-            recruiter.IsActive = recruiterDto.IsActive;
-
-            _recruiterRepository.UpdateRec(recruiter);
-        }
-        public void Add(RecruiterDto recruiterDto)
-        {
-            Recruiter recruiter = new Recruiter
-            {
-                FullName = recruiterDto.FullName,
-                CompanyName = recruiterDto.CompanyName,
-                Email = recruiterDto.Email,
-                Phone = recruiterDto.Phone,
-                IsActive = recruiterDto.IsActive
-            };
-            _recruiterRepository.Add(recruiter);
+            return _userRepository.GetUserById(recruiterId);
         }
 
-        public void Update(int id, RecruiterDto recruiterDto)
+        // Update profile for logged-in recruiter
+        public void UpdateRecProfile(int recruiterId, ApplicationUser user)
         {
-            Recruiter recruiter = _recruiterRepository.GetById(id);
-            if (recruiter != null)
+            ApplicationUser existingUser = _userRepository.GetUserById(recruiterId);
+            if (existingUser == null) return;
+
+            existingUser.FullName = user.FullName;
+            existingUser.CompanyName = user.CompanyName;
+            existingUser.Email = user.Email;
+            existingUser.Phone = user.Phone;
+            existingUser.isActive = user.isActive;
+
+            _userRepository.UpdateUser(existingUser);
+        }
+
+        // Add new recruiter
+        public void Add(ApplicationUser user)
+        {
+            user.Role = "Recruiter";
+            _userRepository.AddUser(user);
+        }
+
+        // Update recruiter by Id
+        public void Update(int id, ApplicationUser user)
+        {
+            ApplicationUser existingUser = _userRepository.GetUserById(id);
+            if (existingUser != null)
             {
-                recruiter.FullName = recruiterDto.FullName;
-                recruiter.CompanyName = recruiterDto.CompanyName;
-                recruiter.Email = recruiterDto.Email;
-                recruiter.Phone = recruiterDto.Phone;
-                recruiter.IsActive = recruiterDto.IsActive;
-                _recruiterRepository.Update(recruiter);
+                existingUser.FullName = user.FullName;
+                existingUser.CompanyName = user.CompanyName;
+                existingUser.Email = user.Email;
+                existingUser.Phone = user.Phone;
+                existingUser.isActive = user.isActive;
+
+                _userRepository.UpdateUser(existingUser);
             }
         }
 
+        // Delete recruiter
         public void Delete(int id)
         {
-            _recruiterRepository.Delete(id);
+            _userRepository.DeleteUser(id);
         }
 
+        // Create a new job post (for logged-in recruiter)
         public JobPostDto CreateJobPost(JobPostDto jobPostDto, int recruiterId)
         {
             jobPostDto.RecruiterId = recruiterId;
             jobPostDto.PostedDate = DateTime.Now;
-            jobPostDto.Status ??= "Pending";
+            jobPostDto.Status = "Pending";
 
             JobPost jobPost = new JobPost
             {
@@ -136,9 +106,55 @@ namespace OnlineJobPortal.Services
 
             _jobRepository.Add(jobPost);
 
-            // Return DTO to controller
             return jobPostDto;
         }
 
+        //  Get job post by Id
+        public JobPostDto? GetJobPostById(int jobId)
+        {
+            JobPost? job = _jobRepository.GetById(jobId);
+            if (job == null) return null;
+
+            return new JobPostDto
+            {
+                Id = job.Id,
+                Title = job.Title,
+                Description = job.Description,
+                CompanyName = job.CompanyName,
+                CategoryId = job.CategoryId,
+                RecruiterId = job.RecruiterId,
+                Status = job.Status,
+                PostedDate = job.PostedDate,
+                NumberOfOpenings = job.NumberOfOpenings,
+                Location = job.Location,
+                SalaryRange = job.SalaryRange,
+                Deadline = job.Deadline
+            };
+        }
+
+        //  Update job post
+        public void UpdateJob(int jobId, JobPostDto jobPostDto)
+        {
+            JobPost? job = _jobRepository.GetById(jobId);
+            if (job == null) return;
+
+            job.Title = jobPostDto.Title;
+            job.Description = jobPostDto.Description;
+            job.CompanyName = jobPostDto.CompanyName;
+            job.CategoryId = jobPostDto.CategoryId;
+            job.Status = jobPostDto.Status;
+            job.NumberOfOpenings = jobPostDto.NumberOfOpenings;
+            job.Location = jobPostDto.Location;
+            job.SalaryRange = jobPostDto.SalaryRange;
+            job.Deadline = jobPostDto.Deadline;
+
+            _jobRepository.Update(job);
+        }
+
+        //  Delete job post
+        public void DeleteJob(int jobId)
+        {
+            _jobRepository.Delete(jobId);
+        }
     }
 }

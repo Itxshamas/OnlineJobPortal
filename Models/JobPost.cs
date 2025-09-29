@@ -16,4 +16,4 @@ namespace OnlineJobPortal.Models
         public string? SalaryRange { get; set; }
         public DateTime Deadline { get; set; }
     }
- }
+}

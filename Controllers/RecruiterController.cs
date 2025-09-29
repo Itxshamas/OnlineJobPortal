@@ -2,116 +2,104 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineJobPortal.DTOs;
 using OnlineJobPortal.IServices;
+using OnlineJobPortal.Models;
 using System.Security.Claims;
-
 
 namespace OnlineJobPortal.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "RecruiterPolicy")]
-
+    [Authorize(Roles = "Recruiter")]
     public class RecruiterController : ControllerBase
     {
         private readonly IRecruiterService _recruiterService;
         private readonly IJobService _jobService;
 
-
         public RecruiterController(IRecruiterService recruiterService, IJobService jobService)
         {
             _recruiterService = recruiterService;
             _jobService = jobService;
-
         }
-        //Get All recuriter
+
+        // Get all recruiters
         [HttpGet("GetAllRecruiters")]
+        [AllowAnonymous]
         public IActionResult GetAllRecruiters()
         {
-            IEnumerable<RecruiterDto> recruiters = _recruiterService.GetAll();
+            IEnumerable<ApplicationUser> recruiters = _recruiterService.GetAll();
             return Ok(recruiters);
         }
-        //Recruiter Profile
+
+        // Get recruiter profile by id
         [HttpGet("{id}")]
         public IActionResult GetRecruiterProfile(int id)
         {
-            RecruiterDto recruiter = _recruiterService.GetById(id);
+            ApplicationUser recruiter = _recruiterService.GetById(id);
             if (recruiter == null)
             {
                 return NotFound();
             }
             return Ok(recruiter);
         }
-        //Update Recruiter Profile
+
+        // Update recruiter profile by id
         [HttpPut("{id}")]
-        public IActionResult UpdateRecruiterProfile(int id, [FromBody] RecruiterDto recruiterDto)
+        public IActionResult UpdateRecruiterProfile(int id, [FromBody] ApplicationUser user)
         {
-            if (id != recruiterDto.Id)
+            if (id != user.Id)
             {
                 return BadRequest();
             }
 
-            _recruiterService.Update(id, recruiterDto);
+            _recruiterService.Update(id, user);
             return NoContent();
         }
-        // Fetch logged-in recruiter profile 
-        [Authorize(Roles = "Recruiter")]
+
+        //Fetch logged-in recruiter profile (uses claims safely)
         [HttpGet("profile")]
         public IActionResult GetProfile()
         {
-            string? claimValue = User.FindFirst("recruiterId")?.Value
-                                  ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int recruiterId))
+            int recruiterId = GetRecruiterIdFromClaims();
+            if (recruiterId == 0)
                 return Unauthorized();
-            RecruiterDto recruiterDto = _recruiterService.GetProfile(recruiterId);
 
-            if (recruiterDto == null)
+            ApplicationUser user = _recruiterService.GetProfile(recruiterId);
+            if (user == null)
                 return NotFound();
 
-            return Ok(recruiterDto);
+            return Ok(user);
         }
         // Update logged-in recruiter profile
-        [Authorize(Roles = "Recruiter")]
         [HttpPut("profile")]
-        public IActionResult UpdateProfile([FromBody] RecruiterDto recruiterDto)
+        public IActionResult UpdateProfile([FromBody] ApplicationUser user)
         {
-            string? claimValue = User.FindFirst("recruiterId")?.Value
-                                  ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int recruiterId = GetRecruiterIdFromClaims();
+            if (recruiterId == 0) return Unauthorized();
 
-            if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int recruiterId))
-                return Unauthorized();
-
-            _recruiterService.UpdateRecProfile(recruiterId, recruiterDto);
+            user.Id = recruiterId;
+            _recruiterService.UpdateRecProfile(recruiterId, user);
 
             return NoContent();
         }
 
-
-
-        // Get all job posts for logged-in recruiter
+        // Get all job posts of logged-in recruiter
         [HttpGet("jobposts")]
         public IActionResult GetAllJobPosts()
         {
-            string recruiterIdClaim = User.FindFirst("recruiterId")?.Value
-                                      ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int recruiterId = GetRecruiterIdFromClaims();
+            if (recruiterId == 0) return Unauthorized();
 
-            if (string.IsNullOrEmpty(recruiterIdClaim) || !int.TryParse(recruiterIdClaim, out int recruiterId))
-                return Unauthorized();
-
-             IEnumerable<JobPostDto> jobs = _jobService.GetAllJobs()
-                                  .Where(j => j.RecruiterId == recruiterId);
+            IEnumerable<JobPostDto> jobs = _jobService.GetAllJobs()
+                                                     .Where(j => j.RecruiterId == recruiterId);
             return Ok(jobs);
         }
 
-        // Create a new job post
+        // Create new job post
         [HttpPost("jobposts")]
         public IActionResult CreateJobPost([FromBody] JobPostDto jobPostDto)
         {
-            string recruiterIdClaim = User.FindFirst("recruiterId")?.Value
-                                      ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(recruiterIdClaim) || !int.TryParse(recruiterIdClaim, out int recruiterId))
-                return Unauthorized();
+            int recruiterId = GetRecruiterIdFromClaims();
+            if (recruiterId == 0) return Unauthorized();
 
             jobPostDto.RecruiterId = recruiterId;
             _jobService.CreateJob(jobPostDto);
@@ -119,15 +107,12 @@ namespace OnlineJobPortal.Controllers
             return Ok(jobPostDto);
         }
 
-        // Get a specific job post by ID
+        // Get job post by ID (only if owned by recruiter)
         [HttpGet("jobposts/{id}")]
-        public IActionResult GetJobPostById(int id)
+        public IActionResult GetJobPostById([FromRoute] int id)
         {
-            string recruiterIdClaim = User.FindFirst("recruiterId")?.Value
-                                      ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(recruiterIdClaim) || !int.TryParse(recruiterIdClaim, out int recruiterId))
-                return Unauthorized();
+            int recruiterId = GetRecruiterIdFromClaims();
+            if (recruiterId == 0) return Unauthorized();
 
             JobPostDto job = _jobService.GetJobById(id);
             if (job == null || job.RecruiterId != recruiterId)
@@ -136,35 +121,29 @@ namespace OnlineJobPortal.Controllers
             return Ok(job);
         }
 
-        // Update a job post (only by the recruiter who owns it)
+        // Update job post (only owner)
         [HttpPut("jobposts/{id}")]
         public IActionResult UpdateJobPost(int id, [FromBody] JobPostDto jobPostDto)
         {
-            string recruiterIdClaim = User.FindFirst("recruiterId")?.Value
-                                      ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(recruiterIdClaim) || !int.TryParse(recruiterIdClaim, out int recruiterId))
-                return Unauthorized();
+            int recruiterId = GetRecruiterIdFromClaims();
+            if (recruiterId == 0) return Unauthorized();
 
             JobPostDto existingJob = _jobService.GetJobById(id);
             if (existingJob == null || existingJob.RecruiterId != recruiterId)
                 return NotFound();
 
-            jobPostDto.RecruiterId = recruiterId; // Ensure recruiterId matches logged-in user
+            jobPostDto.RecruiterId = recruiterId;
             _jobService.UpdateJob(id, jobPostDto);
 
             return NoContent();
         }
 
-        // Delete a job post 
+        //  Delete job post (only owner)
         [HttpDelete("jobposts/{id}")]
         public IActionResult DeleteJobPost(int id)
         {
-            string recruiterIdClaim = User.FindFirst("recruiterId")?.Value
-                                      ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(recruiterIdClaim) || !int.TryParse(recruiterIdClaim, out int recruiterId))
-                return Unauthorized();
+            int recruiterId = GetRecruiterIdFromClaims();
+            if (recruiterId == 0) return Unauthorized();
 
             JobPostDto existingJob = _jobService.GetJobById(id);
             if (existingJob == null || existingJob.RecruiterId != recruiterId)
@@ -174,5 +153,23 @@ namespace OnlineJobPortal.Controllers
 
             return NoContent();
         }
+
+        //  Helper method to safely extract recruiterId from claims
+        private int GetRecruiterIdFromClaims()
+        {
+            string? claimValue = User.FindFirst("id")?.Value;
+
+            if (string.IsNullOrEmpty(claimValue))
+            {
+                claimValue = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                             ?? User.FindFirst("sub")?.Value;
+            }
+
+            return int.TryParse(claimValue, out int recruiterId) ? recruiterId : 0;
+        }
+
     }
 }
+
+
+

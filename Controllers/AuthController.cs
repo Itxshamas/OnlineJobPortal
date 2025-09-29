@@ -15,34 +15,35 @@ namespace OnlineJobPortal.Controllers
             _authService = authService;
         }
 
-        //  Login Endpoint 
-        [HttpPost("Login")]
+        // LOGIN 
+        [HttpPost("login")]
         public IActionResult Login([FromBody] LoginDto loginDto)
         {
-            if (loginDto == null || loginDto.Email == null || loginDto.Password == null)
-            {
+            if (loginDto == null || string.IsNullOrEmpty(loginDto.Email) || string.IsNullOrEmpty(loginDto.Password))
                 return BadRequest(new { Message = "Invalid login request" });
-            }
-            LoginResponseDto loginResponse = _authService.AuthenticateUser(loginDto.Email, loginDto.Password); 
-            if (loginResponse == null)
+
+            LoginResponseDto response = _authService.AuthenticateUser(loginDto.Email, loginDto.Password);
+            if (response == null)
                 return Unauthorized(new { Message = "Invalid credentials" });
 
-            return Ok(loginResponse);
+            return Ok(response);
         }
 
-        // Signup  
-        [HttpPost("Signup")]
+        //  SIGNUP 
+        [HttpPost("signup")]
         public IActionResult Register([FromBody] RegisterDto registerDto)
         {
-            if (registerDto == null || registerDto.Email == null || registerDto.Password == null || registerDto.Role == null)
+            if (registerDto == null ||
+                string.IsNullOrEmpty(registerDto.Email) ||
+                string.IsNullOrEmpty(registerDto.Password) ||
+                string.IsNullOrEmpty(registerDto.Role))
             {
                 return BadRequest(new { Message = "Invalid registration request" });
             }
 
-            if (!_authService.RegisterUser(registerDto))
-            {
+            bool result = _authService.RegisterUser(registerDto);
+            if (!result)
                 return BadRequest(new { Message = "Email already registered" });
-            }
 
             return Ok(new { Message = "User registered successfully" });
         }

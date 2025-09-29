@@ -48,14 +48,14 @@ namespace OnlineJobPortal.Controllers
         [HttpGet("Recruiters")]
         public IActionResult GetRecruiters()
         {
-            IEnumerable<RecruiterDto> recruiters = _recruiterService.GetAll();
+            IEnumerable<ApplicationUser> recruiters = _recruiterService.GetAll();
             return Ok(recruiters);
         }
 
         [HttpGet("Recruiters/{id}")]
         public IActionResult GetRecruiter(int id)
         {
-            RecruiterDto? recruiter = _recruiterService.GetById(id);
+            ApplicationUser? recruiter = _recruiterService.GetById(id);
             if (recruiter == null)
             {
                 return NotFound(new { Message = "Recruiter not found" });
@@ -64,29 +64,29 @@ namespace OnlineJobPortal.Controllers
         }
 
         [HttpPost("Recruiters")]
-        public IActionResult AddRecruiter([FromBody] RecruiterDto recruiterDto)
+        public IActionResult AddRecruiter([FromBody] ApplicationUser user)
         {
-            _recruiterService.Add(recruiterDto);
+            _recruiterService.Add(user);
             return Ok(new { Message = "Recruiter added successfully" });
         }
 
         [HttpPut("Recruiters/{id}")]
-        public IActionResult UpdateRecruiter(int id, [FromBody] RecruiterDto recruiterDto)
+        public IActionResult UpdateRecruiter(int id, [FromBody] ApplicationUser user)
         {
-            RecruiterDto? existing = _recruiterService.GetById(id);
+            ApplicationUser? existing = _recruiterService.GetById(id);
             if (existing == null)
             {
                 return NotFound(new { Message = "Recruiter not found" });
             }
 
-            _recruiterService.Update(id, recruiterDto);
+            _recruiterService.Update(id, user);
             return Ok(new { Message = "Recruiter updated successfully" });
         }
 
         [HttpDelete("Recruiters/{id}")]
         public IActionResult DeleteRecruiter(int id)
         {
-            RecruiterDto? recruiter = _recruiterService.GetById(id);
+            ApplicationUser? recruiter = _recruiterService.GetById(id);
             if (recruiter == null)
             {
                 return NotFound(new { Message = "Recruiter not found" });

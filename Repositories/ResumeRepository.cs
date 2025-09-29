@@ -24,6 +24,24 @@ namespace OnlineJobPortal.Repositories
             return await _context.Resumes.FirstOrDefaultAsync(r => r.Id == id);
         }
 
+        public async Task<Resume?> GetByUserIdAsync(int userId)
+        {
+            return await _context.Resumes
+                .FirstOrDefaultAsync(r => r.UserId == userId);
+        }
+
+        public async Task AddAsync(Resume resume)
+        {
+            await _context.Resumes.AddAsync(resume);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Resume resume)
+        {
+            _context.Resumes.Update(resume);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<bool> DeleteAsync(int id)
         {
             Resume resume = await _context.Resumes.FindAsync(id);
