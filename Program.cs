@@ -53,7 +53,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 //  Repositories 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();

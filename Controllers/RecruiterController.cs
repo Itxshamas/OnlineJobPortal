@@ -26,7 +26,7 @@ namespace OnlineJobPortal.Controllers
         [AllowAnonymous]
         public IActionResult GetAllRecruiters()
         {
-            IEnumerable<ApplicationUser> recruiters = _recruiterService.GetAll();
+            IEnumerable<ApplicationUserDto> recruiters = _recruiterService.GetAll();
             return Ok(recruiters);
         }
 

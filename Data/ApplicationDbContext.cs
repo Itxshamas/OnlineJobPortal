@@ -13,7 +13,6 @@ namespace OnlineJobPortal.Data
         public DbSet<JobPost> JobPosts{ get; set; }
         public DbSet<Application> Applications { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<AdminLog> AdminLogs { get; set; }
         public DbSet<Resume> Resumes { get; set; }
     }
 }

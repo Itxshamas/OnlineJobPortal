@@ -1,6 +1,8 @@
 using OnlineJobPortal.Interfaces;
 using OnlineJobPortal.IServices;
 using OnlineJobPortal.Models;
+using OnlineJobPortal.DTOs;
+
 using System.Collections.Generic;
 
 namespace OnlineJobPortal.Services
@@ -14,15 +16,7 @@ namespace OnlineJobPortal.Services
             _adminRepository = adminRepository;
         }
 
-        public IEnumerable<AdminLog> GetAllLogs()
-        {
-            return _adminRepository.GetAllLogs();
-        }
-
-        public void AddLog(AdminLog log)
-        {
-            _adminRepository.AddLog(log);
-        }
+        
 
         public AdminReport GetSystemReport()
         {
@@ -33,9 +27,19 @@ namespace OnlineJobPortal.Services
             return _adminRepository.GetAllUsers();
         }
 
-        public IEnumerable<ApplicationUser> GetAllAdmins()
+        public IEnumerable<ApplicationUserDto> GetAllAdmins()
         {
-            return _adminRepository.GetAllUsers().Where(u => u.Role == "Admin");
+            return _adminRepository.GetAllUsers().Where(u => u.Role == "Admin").Select(u=>new ApplicationUserDto
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Email = u.Email,
+                Role = u.Role,
+                isActive = u.isActive,
+                Phone = u.Phone,
+                CompanyName = u.CompanyName,
+                CreatedAt = u.CreatedAt
+            });
         }
     }
 }

@@ -14,6 +14,14 @@ namespace OnlineJobPortal.Repositories
             _context = context;
         }
 
+
+        //Repo Method for JobSeekers
+        public IEnumerable<ApplicationUser> GetJobSeekerByRole(string role)
+        {
+            return _context.ApplicationUsers.Where(u => u.Role == role).ToList();
+        }
+
+
         public IEnumerable<ApplicationUser> GetUsersByRole(string role)
         {
             return _context.ApplicationUsers.Where(u => u.Role == role).ToList();

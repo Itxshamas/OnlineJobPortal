@@ -18,13 +18,15 @@ namespace OnlineJobPortal.Controllers
         private readonly IApplicationService _applicationService;
         private readonly IResumeService _resumeService;
 
+        private readonly IUserService _userService;
+
         public AdminController(
             ICategoryService categoryService,
             IRecruiterService recruiterService,
             IAdminService adminService,
             IApplicationService applicationService,
-            IResumeService resumeService
-
+            IResumeService resumeService,
+            IUserService userService
             )
         {
             _categoryService = categoryService;
@@ -32,27 +34,78 @@ namespace OnlineJobPortal.Controllers
             _adminService = adminService;
             _applicationService = applicationService;
             _resumeService = resumeService;
+            _userService = userService;
 
         }
-
-
+        //Get All Logged in Admins 
         [HttpGet("GetAllAdmin")]
         public IActionResult GetAllAdmin()
         {
-            IEnumerable<ApplicationUser> admins = _adminService.GetAllAdmins();
+            IEnumerable<ApplicationUserDto> admins = _adminService.GetAllAdmins();
             return Ok(admins);
-
+        }
+        //Get All Job- Seekers :
+        [HttpGet("GetAllJobSeekers")]
+        public IActionResult GetAllJobSeekers()
+        {
+            IEnumerable<ApplicationUserDto> jobseekers = _userService.GetAllJobSeekers();
+            return Ok(jobseekers);
         }
 
-        //  Recruiter CRUD
-        [HttpGet("Recruiters")]
+        //JobSeeker Crud :
+        [HttpPost("PostJobSeeker")]
+        public IActionResult AddJobSeeker([FromBody] ApplicationUser user)
+        {
+            _userService.AddJobSeeker(user);
+            return Ok(new { Message = "JobSeeker added successfully" });
+        }
+
+        [HttpGet("GetJobSeekerById")]
+        public IActionResult GetJobSeekerById(int id)
+        {
+            ApplicationUser jobseeker = _userService.GetJobSeeker(id);
+            if (jobseeker == null)
+            {
+                return NotFound(new { Message = "JobSeeker not found" });
+            }
+            return Ok(jobseeker);
+        }
+
+        [HttpPut("UpdateJobSeekerById")]
+        public IActionResult UpdateJobSeeker(int id, [FromBody] ApplicationUser user)
+        {
+            ApplicationUser? existing = _userService.UpadeEmployeeById(id);
+            if (existing == null)
+            {
+                return NotFound(new { Message = "JobSeeker not found" });
+            }
+
+            _userService.Update(id, user);
+            return Ok(new { Message = "JobSeeker updated successfully" });
+        } 
+
+          [HttpDelete("DeleteJobSeekersById")]
+        public IActionResult DeleteJobSeekers(int id)
+        {
+            ApplicationUser? recruiter = _userService.DeleteById(id);
+            if (recruiter == null)
+            {
+                return NotFound(new { Message = "Recruiter not found" });
+            }
+
+            _recruiterService.Delete(id);
+            return Ok(new { Message = "Recruiter deleted successfully" });
+        } 
+
+        //Recruiter CRUD
+        [HttpGet("GetAllRecruiters")]
         public IActionResult GetRecruiters()
         {
-            IEnumerable<ApplicationUser> recruiters = _recruiterService.GetAll();
+            IEnumerable<ApplicationUserDto> recruiters = _recruiterService.GetAll();
             return Ok(recruiters);
         }
 
-        [HttpGet("Recruiters/{id}")]
+        [HttpGet("GetRecruiterById")]
         public IActionResult GetRecruiter(int id)
         {
             ApplicationUser? recruiter = _recruiterService.GetById(id);
@@ -63,14 +116,14 @@ namespace OnlineJobPortal.Controllers
             return Ok(recruiter);
         }
 
-        [HttpPost("Recruiters")]
+        [HttpPost("PostNewRecruiter")]
         public IActionResult AddRecruiter([FromBody] ApplicationUser user)
         {
             _recruiterService.Add(user);
             return Ok(new { Message = "Recruiter added successfully" });
         }
 
-        [HttpPut("Recruiters/{id}")]
+        [HttpPut("UpdateRecruiterById")]
         public IActionResult UpdateRecruiter(int id, [FromBody] ApplicationUser user)
         {
             ApplicationUser? existing = _recruiterService.GetById(id);
@@ -83,7 +136,7 @@ namespace OnlineJobPortal.Controllers
             return Ok(new { Message = "Recruiter updated successfully" });
         }
 
-        [HttpDelete("Recruiters/{id}")]
+        [HttpDelete("DeleteRecruiterById")]
         public IActionResult DeleteRecruiter(int id)
         {
             ApplicationUser? recruiter = _recruiterService.GetById(id);
@@ -150,13 +203,7 @@ namespace OnlineJobPortal.Controllers
             return Ok(new { Message = "Category deleted successfully" });
         }
 
-        //  Admin Logs
-        [HttpGet("AdminLogs")]
-        public IActionResult GetLogs()
-        {
-            IEnumerable<AdminLog> logs = _adminService.GetAllLogs();
-            return Ok(logs);
-        }
+
 
         //  System Reports
         [HttpGet("SystemReports")]

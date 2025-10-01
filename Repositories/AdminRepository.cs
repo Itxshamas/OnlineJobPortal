@@ -15,17 +15,9 @@ namespace OnlineJobPortal.Repositories
             _context = context;
         }
 
-        public IEnumerable<AdminLog> GetAllLogs()
-        {
-            return _context.AdminLogs.ToList();
-        }
 
-        public void AddLog(AdminLog log)
-        {
-            _context.AdminLogs.Add(log);
-            _context.SaveChanges();
-        }
 
+      
         public AdminReport GetSystemReport()
         {
             return new AdminReport

@@ -20,9 +20,19 @@ namespace OnlineJobPortal.Services
         }
 
         //  Get all recruiters
-        public IEnumerable<ApplicationUser> GetAll()
+        public IEnumerable<ApplicationUserDto> GetAll()
         {
-            return _userRepository.GetUsersByRole("Recruiter");
+            return _userRepository.GetUsersByRole("Recruiter").Select(u=> new ApplicationUserDto
+            {
+              Id = u.Id,
+                FullName = u.FullName,
+                Email = u.Email,
+                Role = u.Role,
+                isActive = u.isActive,
+                Phone = u.Phone,
+                CompanyName = u.CompanyName,
+                CreatedAt = u.CreatedAt
+            });
         }
 
         //  Get recruiter by Id

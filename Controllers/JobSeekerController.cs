@@ -5,6 +5,7 @@ using OnlineJobPortal.IServices;
 using System.Security.Claims;
 using System.IO;
 using System.Threading.Tasks;
+using OnlineJobPortal.Models;
 
 namespace OnlineJobPortal.Controllers
 {
@@ -31,7 +32,7 @@ namespace OnlineJobPortal.Controllers
             if (string.IsNullOrEmpty(email))
                 return Unauthorized();
 
-            Models.ApplicationUser user = _userService.GetUserByEmail(email);
+            ApplicationUser user = _userService.GetUserByEmail(email);
             if (user == null)
                 return NotFound();
 
@@ -57,7 +58,7 @@ namespace OnlineJobPortal.Controllers
             if (string.IsNullOrEmpty(email))
                 return Unauthorized();
 
-            Models.ApplicationUser user = _userService.GetUserByEmail(email);
+            ApplicationUser user = _userService.GetUserByEmail(email);
 
             if (user == null)
                 return NotFound();

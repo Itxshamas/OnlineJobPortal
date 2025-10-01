@@ -6,7 +6,7 @@ namespace OnlineJobPortal.IServices
 {
     public interface IRecruiterService
     {
-        IEnumerable<ApplicationUser> GetAll();
+        IEnumerable<ApplicationUserDto> GetAll();
         ApplicationUser? GetById(int id);
         void Add(ApplicationUser user);
         void Update(int id, ApplicationUser user);
