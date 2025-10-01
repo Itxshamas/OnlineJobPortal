@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+
 //  Swagger with JWT 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -52,26 +53,27 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 //  Repositories 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRecruiterRepository, RecruiterRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
 builder.Services.AddScoped<IResumeRepository, ResumeRepository>();
+builder.Services.AddScoped<IJobRepository, JobRepository>();
 
 
-//  Services 
+//Services 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IRecruiterService, RecruiterService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IApplicationService, ApplicationService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IResumeService, ResumeService>();
 
 
-
-
 //  JWT Authentication 
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var keyString = jwtSettings["Key"];
 if (string.IsNullOrEmpty(keyString))

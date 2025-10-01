@@ -6,6 +6,6 @@ namespace OnlineJobPortal.DTOs
     {
         public int JobPostId { get; set; }
         public int UserId { get; set; }
-        public DateTime? AppliedDate { get; set; }
+        public DateTime AppliedDate { get; set; }
     }
 }

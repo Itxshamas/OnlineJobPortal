@@ -14,6 +14,14 @@ namespace OnlineJobPortal.Repositories
             _context = context;
         }
 
+
+        //Repo Method for JobSeekers
+        public IEnumerable<ApplicationUser> GetJobSeekerByRole(string role)
+        {
+            return _context.ApplicationUsers.Where(u => u.Role == role).ToList();
+        }
+
+
         public IEnumerable<ApplicationUser> GetUsersByRole(string role)
         {
             return _context.ApplicationUsers.Where(u => u.Role == role).ToList();
@@ -41,9 +49,15 @@ namespace OnlineJobPortal.Repositories
             _context.SaveChanges();
         }
 
+        public async Task UpdateUserAsync(ApplicationUser user)
+        {
+            _context.ApplicationUsers.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
         public void DeleteUser(int id)
         {
-            var user = _context.ApplicationUsers.FirstOrDefault(u => u.Id == id);
+            ApplicationUser user = _context.ApplicationUsers.FirstOrDefault(u => u.Id == id);
             if (user != null)
             {
                 _context.ApplicationUsers.Remove(user);
